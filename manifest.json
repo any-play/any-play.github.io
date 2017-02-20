@@ -1,0 +1,25 @@
+
+{
+  "name": "AnyPlay",
+  "short_name": "AnyPlay",
+  "icons": [
+    {
+      "src": "/img/logo.png",
+      "sizes": "300x300",
+      "type": "image/png"
+    },{
+      "src": "/img/logo.webp",
+      "sizes": "300x300",
+      "type": "image/webp"
+    }
+  ],
+  "prefer_related_applications": true,
+  "related_applications": [
+    {
+      "platform": "play",
+      "id": "io.anyplay"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone"
+}

@@ -1,0 +1,114 @@
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  font-family: 'Roboto', 'Helvetica', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #303030;
+}
+
+video {
+  max-width: 100%;
+}
+
+form, textarea {
+  width: 100%;
+}
+
+input[type="file"] {
+  color: transparent;
+}
+
+h3 {
+  color: rgba(255,255,255,.6);
+}
+
+h3:hover {
+  color: rgba(255,255,255,1);
+  cursor: default;
+}
+
+#jumbo {
+  background-color: #009688;
+}
+
+#jumbo h3 {
+  font-size: 34px;
+  font-family: "Roboto","Helvetica","Arial",sans-serif;
+  font-weight: 400;
+  padding: 75px 40px;
+  margin: 0;
+  color: #fff;
+}
+
+#jumbo nav {
+  background-color: #009688;
+}
+
+#jumbo nav a {
+  padding: 0 24px;
+  margin: 0;
+  text-decoration: none;
+  height: 48px;
+  line-height: 48px;
+  text-align: center;
+  font-weight: 500;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.6);
+}
+
+main {
+  margin: 10px;
+}
+
+li {
+  list-style: none;
+}
+
+.card {
+  margin-top: 48px;
+  background-color: #fff;
+  padding: 40px;
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,.14),
+              0 3px 1px -2px rgba(0,0,0,.2),
+              0 1px 5px 0 rgba(0,0,0,.12);
+}
+
+.horizontalMenu ul {
+  white-space: nowrap;
+  list-style: none;
+  padding: 0;
+  overflow-x: scroll;
+}
+
+.horizontalMenu ul li {
+  display: inline-block;
+  width: 480px;
+  height: 270px;
+  padding: 0;
+}
+
+.horizontalMenu .linkItem {
+  background-color: white;
+  margin-right: 10px;
+}
+
+.horizontalMenu .linkItem div {
+  float: left;
+  background-repeat: no-repeat;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(50, 50, 50);
+  background-size: contain;
+  background-position: center;
+  transform-origin: top left;
+  transition: 1s;
+  transform: scale(1);
+}
+
+.horizontalMenu .linkItem:hover div {
+  transform: scale(.3);
+}
