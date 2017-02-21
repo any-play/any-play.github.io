@@ -192,6 +192,18 @@
     }
   }
 
+  // Needed to handle larger buffers
+  // http://stackoverflow.com/a/12713326/1008999
+  function Uint8ToString(u8a) {
+    const CHUNK_SZ = 0x8000
+    let c = [], i = 0, len = u8a.length
+
+    for (; i < len; i += CHUNK_SZ)
+      c.push(String.fromCharCode.apply(null, u8a.subarray(i, i + CHUNK_SZ)))
+
+    return c.join('')
+  }
+
   function Body() {
     this.bodyUsed = false
 
@@ -199,7 +211,7 @@
     this.blob = () => concatStream(this).then(buffer => new Blob([buffer]))
     this.json = () => this.text().then(JSON.parse)
     this.text = () => concatStream(this).then(buffer =>
-      String.fromCharCode(...new Uint16Array(buffer))
+      Uint8ToString(buffer)
     )
 
     return this
