@@ -16,9 +16,9 @@
   // Utilities
   let $ = (selector, fragment) => fragment.querySelector(selector)
   let $$ = (selector, fragment) => fragment.querySelectorAll(selector)
-  let setVal = res => res.text().then(txt => (_code.value = txt))
+  let setVal = file => file.text().then(txt => (_code.value = txt)).catch(()=>{alert(1)})
   let stop = evt => evt && evt.stopPropagation(evt.preventDefault())
-  let filesDroped = evt => setVal(new Response(evt.dataTransfer.files[0]), stop(evt))
+  let filesDroped = evt => setVal(evt.dataTransfer.files[0], stop(evt))
 
   /**
    * Load all plugins
@@ -83,7 +83,7 @@
     })
   }
 
-  app.loadPlugin = evt => setVal(new Response(evt.target.files[0]))
+  app.loadPlugin = evt => setVal(evt.target.files[0])
 
   app.loadPluginPage = evt => {
     stop(evt)
