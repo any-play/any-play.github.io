@@ -63,7 +63,9 @@
         video.controls = true
         video.className = 'video-js vjs-default-skin'
         $overview.appendChild(video)
-        let player = videojs(video)
+        let player = videojs(video, {
+          plugins: { airplayButton: {} }
+        })
         player.fluid(true)
         player.qualityLevels()
         player.src(res.data.video.source)
