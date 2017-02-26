@@ -64,7 +64,7 @@
     })
   })
 
-  var interFace = Object.assign({
+  var interFace = window.interFace = Object.assign({
     getPlatform() {
       return document.referrer.includes('android') ? 'android' : 'webapp'
     },
