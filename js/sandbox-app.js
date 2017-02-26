@@ -64,14 +64,14 @@
     })
   })
 
-  var interFace = window.AnyPlay || {
+  var interFace = Object.assign({
     getPlatform() {
       return document.referrer.includes('android') ? 'android' : 'webapp'
     },
     getVersion() {
       return '0.0.0'
     }
-  }
+  }, window.AnyPlay || {})
 
   window.AnyPlay = {
     Plugin: class {
