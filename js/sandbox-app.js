@@ -64,16 +64,11 @@
     })
   })
 
-  var interFace = window.interFace = Object.assign({
-    getPlatform() {
-      return document.referrer.includes('android') ? 'android' : 'webapp'
-    },
-    getVersion() {
-      return '0.0.0'
-    }
-  }, window.AnyPlay || {})
+  var interFace = window.AnyPlay || {}
 
   window.AnyPlay = {
+    platform: interFace.getPlatform ? interFace.getPlatform() : 'webapp',
+    version: interFace.getVersion ? interFace.getVersion() : '0.0.0',
     Plugin: class {
       constructor(name) {
         this.name = name
@@ -93,7 +88,7 @@
     'te', 'trailer', 'transfer-encoding', 'upgrade', 'user-agent', 'via'
   ]
 
-  if (interFace.getPlatform() === 'webapp') {
+  if (window.AnyPlay.platform === 'webapp') {
     window.AnyPlay.fetch = (...args) => { // Webapp proxy method
       let request = new Request(...args)
       let params = new URLSearchParams
