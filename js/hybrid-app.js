@@ -2,8 +2,19 @@ function async(a){return(...b)=>{var c=a(...b),d=e=>e.done?Promise.resolve(e.val
 
 window.jsonp = uuid => result => AnyPlay.callback(uuid, JSON.stringify(result))
 
-window.log = (id, ...args) => {
-  console.log(`%c ${id} `, 'background: #222; color: #bada55', ...args)
+if (window.AnyPlay) {
+  window.log = (id, ...args) => {
+    let msg = `[${id}] `
+    for (let arg of args) {
+      msg += ' '
+      msg += typeof arg === 'string' ? arg : JSON.stringify(arg, null, 2)
+    }
+    console.info(msg)
+  }
+} else {
+  window.log = (id, ...args) => {
+    console.log(`%c ${id} `, 'background: #222; color: #bada55', ...args)
+  }
 }
 
 window.groupCollapsed = (id, title, ...args) => {
