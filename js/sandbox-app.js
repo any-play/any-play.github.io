@@ -64,6 +64,15 @@
     })
   })
 
+  var interFace = window.AnyPlay || {
+    getPlatform() {
+      return document.referrer.includes('android') ? 'android' : 'webapp'
+    },
+    getVersion() {
+      return '0.0.0'
+    }
+  }
+
   window.AnyPlay = {
     Plugin: class {
       constructor(name) {
@@ -84,11 +93,11 @@
     'te', 'trailer', 'transfer-encoding', 'upgrade', 'user-agent', 'via'
   ]
 
-  if (!document.referrer.includes('android')) {
-    window.AnyPlay.fetch = (url, opts = {}) => {
-      let request = new Request(url, opts)
+  if (interFace.getPlatform() === 'webapp') {
+    window.AnyPlay.fetch = (...args) => { // Webapp proxy method
+      let request = new Request(...args)
       let params = new URLSearchParams
-      let headers = new Headers(opts.headers || [])
+      let headers = new Headers(args[1] && args[1].headers || request.headers)
 
       params.set('url', request.url)
       params.set('ignoreReqHeaders', 'true')
@@ -99,11 +108,35 @@
 
       return fetch(request)
     }
-  } else {
-    AnyPlay.fetch = (url, opts = {}) => {
-      let request = new Request(url, opts)
-      let headers = new Headers()
-      let reqHeaders = new Headers(opts.headers || [])
+  } else if (interFace.fetch) { // Android app method
+    AnyPlay.fetch = (...args) => {
+      let request = new Request(...args)
+      let headers = new Headers(args[1] && args[1].headers || request.headers)
+
+      return request.text().then(body => {
+        var data = {
+          method: request.method,
+          body,
+          headers: [...headers],
+          redirect: request.redirect,
+          integrity: request.integrity
+        }
+
+        // sync blocks :(
+        // Don't have a UI either so...
+        let res = interFace.fetch(request.url, JSON.stringify(data))
+        res = JSON.parse(res)
+
+        return new Response(res.body, res)
+      })
+    }
+  } else { // OLD METHOD
+    AnyPlay.fetch = (...args) => {
+      console.warn('Please update your app')
+
+      let request = new Request(...args)
+      let reqHeaders = new Headers(args[1] && args[1].headers || request.headers)
+      let headers = new Headers
 
       for (let [h, v] of reqHeaders) {
         h = h.replace(/^x-play-/, '')
