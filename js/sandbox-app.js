@@ -67,7 +67,7 @@
   var interFace = window.AnyPlay || {}
 
   window.AnyPlay = {
-    platform: interFace.getPlatform ? interFace.getPlatform() : 'webapp',
+    platform: interFace.getPlatform ? interFace.getPlatform() : document.referrer.includes('android') ? 'android' : 'webapp',
     version: interFace.getVersion ? interFace.getVersion() : '0.0.0',
     Plugin: class {
       constructor(name) {
