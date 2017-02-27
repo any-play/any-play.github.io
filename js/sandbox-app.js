@@ -18,7 +18,13 @@
         channel.onmessage = event => {
           if (event.data.action === 'eval') {
             deferedPlugin.promise.then(plugin => {
-              event.ports[0].postMessage({ ok: true, data: {name: plugin.name} })
+              event.ports[0].postMessage({
+                ok: true,
+                data: {
+                  name: plugin.name,
+                  settings: plugin.settings
+                }
+              })
             }, err => {
               event.ports[0].postMessage({ ok: false, data: err.stack })
             })
@@ -72,6 +78,8 @@
     Plugin: class {
       constructor(name) {
         this.name = name
+        this.settings = []
+
         setTimeout(() => deferedPlugin.resolve(this))
       }
 
