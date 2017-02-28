@@ -69,8 +69,8 @@ window.app = {
     })
   },
 
-  login(plugin, body) {
-    return app.postMessage(plugin, { action: 'login', body })
+  updateSettings(plugin, settings) {
+    return app.postMessage(plugin, { action: 'updateSettings', settings })
   },
 
   /**
@@ -90,12 +90,27 @@ window.app = {
    * @param  {[type]} code [description]
    * @return {[type]}      [description]
    */
-  load(code) {
+  load(code, storage) {
     let id = app.id++
-    groupCollapsed(id, 'loading code', code)
-    log(id, 'creating iframe')
     let iframe = document.createElement('iframe')
     let mc = new MessageChannel
+    let store = localStorage[storage] ? JSON.parse(localStorage[storage]) : {}
+
+    mc.port1.onmessage = evt => {
+      console.log(evt.data)
+      if (evt.data.action == 'setStorage') {
+        store[evt.data.key] = evt.data.value
+        localStorage[storage] = JSON.stringify(store)
+      }
+      if (evt.data.action == 'delStorage') {
+        delete store[evt.data.key]
+        localStorage[storage] = JSON.stringify(store)
+      }
+      if (evt.data.action == 'clearStorage') {
+        store = {}
+        localStorage[storage] = JSON.stringify(store)
+      }
+    }
 
     function sendMessage(message) {
       return new Promise((resolve, reject) => {
@@ -111,17 +126,14 @@ window.app = {
     iframe.sandbox = 'allow-scripts'
     iframe.referrerPolicy = 'unsafe-url'
 
-    return new Promise((resolve)=>{
+    return new Promise(resolve => {
       iframe.onload = () => {
-        log(id, iframe.src + ' loaded successfully')
-        iframe.contentWindow.postMessage('Hello from parent', '*', [mc.port2])
+        iframe.contentWindow.postMessage(store, '*', [mc.port2])
 
-        log(id, 'evaling code')
         let timeoutId = null
         let timeout = new Promise(resolve => {
           timeoutId = setTimeout(() => {
             log(id, 'evaling timed out')
-
             log(id, 'removing iframe')
             iframe.remove()
 
@@ -141,14 +153,12 @@ window.app = {
           }
 
           if (app.plugins[result.data.name]) {
-            log(id, result.data.name + ' already exist')
-            log(id, 'removing iframe')
+            log(id, result.data.name + ' already exist, refuse to add new plugin')
             iframe.remove()
 
             return {ok: false, data: {message: 'A plugin with that name already exist'}}
           }
 
-          log(id, result.data.name + ' has been added')
           app.plugins[result.data.name] = {iframe, sendMessage}
           return result
         })

@@ -1,19 +1,92 @@
 ;(() => {
-  var p
+  var p, channel
 
   // i know...
-  var deferedPlugin = {}
+  const deferedPlugin = {}
   deferedPlugin.promise = new Promise((rs,rj) => {
     deferedPlugin.resolve = rs
     deferedPlugin.reject = rj
   })
 
+  let store = Object.create(null)
+
+  class Storage {
+    getItem(sKey) {
+      return this.hasItem(sKey) ? store[sKey] : null
+    }
+    setItem(key, value) {
+      store[key] = value
+      channel.postMessage({action: 'setStorage', key, value})
+      return true
+    }
+    removeItem(sKey) {
+      if (!this.hasItem(sKey)) return false
+      delete store[sKey]
+      channel.postMessage(['delStorage', sKey])
+      return true
+    }
+    hasItem(sKey) {
+      if (!sKey) return false
+      return sKey in store
+    }
+    keys() {
+      return Object.keys(store)
+    }
+    get length() {
+      return Object.keys(store).length
+    }
+    clear() {
+      channel.postMessage(['clearStorage', sKey])
+      store = Object.create(null)
+    }
+    key(n) {
+      return Object.keys(store)[n]
+    }
+  }
+
+  window.storage = new Proxy(new Storage, {
+    get(oTarget, sKey) {
+      return oTarget[sKey] || oTarget.getItem(sKey) || undefined
+    },
+    set(oTarget, sKey, vValue) {
+      if (sKey in oTarget) return false
+      return oTarget.setItem(sKey, vValue)
+    },
+    deleteProperty(oTarget, sKey) {
+      if (sKey in oTarget) return false
+      return oTarget.removeItem(sKey)
+    },
+    enumerate(oTarget, sKey) {
+      return oTarget.keys()
+    },
+    ownKeys(oTarget, sKey) {
+      return oTarget.keys()
+    },
+    has(oTarget, sKey) {
+      return sKey in oTarget || oTarget.hasItem(sKey)
+    },
+    defineProperty(oTarget, sKey, oDesc) {
+      if (oDesc && 'value' in oDesc) { oTarget.setItem(sKey, oDesc.value) }
+      return oTarget
+    },
+    getOwnPropertyDescriptor(oTarget, sKey) {
+      var vValue = oTarget.getItem(sKey)
+      return vValue ? {
+        value: vValue,
+        writable: true,
+        enumerable: true,
+        configurable: false
+      } : undefined
+    },
+  })
+
   var establisedChannel = new Promise(resolve => {
-    window.addEventListener('message', function listener(event){
+    window.addEventListener('message', function listener(event) {
       if (event.origin === location.origin || 'webview') {
+        store = event.data
         // is trusted - channel establised
         window.removeEventListener('message', listener)
-        let channel = event.ports[0]
+        channel = event.ports[0]
 
         channel.onmessage = event => {
           if (event.data.action === 'eval') {
@@ -50,13 +123,13 @@
               })
           }
 
-          if (event.data.action === 'login') {
+          if (event.data.action === 'updateSettings') {
             deferedPlugin.promise.then(app => {
-              if (typeof app.login !== 'function')
-                throw new Error('No login function exist')
+              if (typeof app.updateSettings !== 'function')
+                throw new Error('No updateSettings function exist')
 
-              return Promise.resolve(app.login(event.data.body)).then(data => {
-                event.ports[0].postMessage({ok: true, data})
+              return Promise.resolve(app.updateSettings(JSON.parse(event.data.settings))).then(() => {
+                event.ports[0].postMessage({ok: true, data: ''})
               })
             }).catch(err => {
               let data = {stack: err.stack, message: err.message}
@@ -75,7 +148,7 @@
   window.AnyPlay = {
     platform: interFace.getPlatform ? interFace.getPlatform() : document.referrer.includes('android') ? 'android' : 'webapp',
     version: interFace.getVersion ? interFace.getVersion() : '0.0.0',
-    Plugin: class {
+    Plugin: class Plugin {
       constructor(name) {
         this.name = name
         this.settings = []

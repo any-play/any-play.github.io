@@ -3,7 +3,7 @@
 ;(async(function* (){
   // Regex to test if code is a url and only one line...
   const URL_REGEXP = /^[a-z][a-z\d.+-]*:\/*(?:[^:@]+(?::[^@]+)?@)?(?:[^\s:/?#]+|\[[a-f\d:]+])(?::\d+)?(?:\/[^?#]*)?(?:\?[^#]*)?(?:#.*)?$/i
-
+  const dbPlugins = db => db.transaction('plugins', 'readwrite').objectStore('plugins')
   /**
    * Creates a indexedDB database structure if such dose not exist
    */
@@ -31,7 +31,7 @@
     request.onupgradeneeded = onupgradeneeded
     request.onsuccess = evt => {
       let db = evt.target.result
-      let store = db.transaction('plugins', 'readwrite').objectStore('plugins')
+      let store = dbPlugins(db)
       let cursorRequest = store.openCursor()
       cursorRequest.onerror = console.error
       cursorRequest.onsuccess = evt => {
@@ -46,7 +46,7 @@
     }
   })
 
-  yield Promise.all(plugins.map(p => app.load(p.code)))
+  yield Promise.all(plugins.map(p => app.load(p.code, p.storage)))
 
   function displayContent(evt, content) {
     stop(evt)
@@ -139,25 +139,33 @@
     if (code.match(URL_REGEXP)) {
       url = code
       code = yield fetch(code).then(res => res.text())
-      console.log(code)
     }
 
-    let res = yield app.load(code)
+    let request = indexedDB.open('tv', 1)
 
-    if (res.ok) {
-      yield new Promise((rs, rj) => {
-        let request = indexedDB.open('tv', 1)
-        request.onupgradeneeded = onupgradeneeded
-        request.onsuccess = evt => {
-          let db = evt.target.result
-          let store = db.transaction('plugins', 'readwrite').objectStore('plugins')
-          let plugin = {name: res.data.name, code, url}
-          plugins.push(plugin)
-          store.add(plugin).onsuccess = () => rs()
-        }
-      })
-      app.loadPluginPage()
+    request.onupgradeneeded = onupgradeneeded
+    request.onsuccess = evt => {
+      let db = evt.target.result
+      let store = dbPlugins(db)
+      let plugin = {name: 'Unknown', code, url}
+
+      store.add(plugin).onsuccess = evt => {
+        plugin.storage = evt.target.result
+
+        app.load(plugin.code).then(res => {
+          if (res.ok) {
+            plugin.name = res.data.name
+            dbPlugins(db).put(plugin, plugin.storage).onsuccess = () => app.loadPluginPage()
+            plugins.push(plugin)
+          } else {
+            dbPlugins(db).delete(plugin.storage)
+          }
+        })
+
+      }
     }
+
+
   })
 
   let nav = () => {
