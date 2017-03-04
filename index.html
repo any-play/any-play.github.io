@@ -54,7 +54,7 @@
       <section class="card">
         <h4 class="mdl-cell mdl-cell--12-col">Add Plugin</h4>
         <form method="post" onsubmit="app.submitPlugin(event)">
-          <textarea id="_code" placeholder="Enter or drag 'n drop a url, code or a file here, Then submit" name="code" required rows="3"></textarea>
+          <textarea ondrop="app.filesDroped(event)" id="_code" placeholder="Enter or drag 'n drop a url, code or a file here, Then submit" name="code" required rows="3"></textarea>
           <input id="_file" type="file" accept="text/javascript" hidden onchange="app.loadPlugin(event)">
           <button id="_fileAdd" onclick="_file.click()" type="button">
             Choose file
@@ -92,8 +92,9 @@
     <!-- list item
     ================================================== -->
     <template id="$pluginItem">
-      <section class="pluginItem">
-        <a href="name" id="name"></a>
+      <section class="pluginItem card">
+        <a href="name" class="name"></a>
+        <button type="button" onclick="app.delete(this.dataset.name).then(app.loadPluginPage)">Delete</button>
       </section>
     </template>
 

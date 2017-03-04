@@ -10,8 +10,8 @@
   let $$ = (selector, fragment) => fragment.querySelectorAll(selector)
   let setVal = file => file.text().then(txt => (_code.value = txt)).catch(()=>{alert(1)})
   let stop = evt => evt && evt.stopPropagation(evt.preventDefault())
-  let filesDroped = evt => setVal(evt.dataTransfer.files[0], stop(evt))
   let {plugins} = yield app.getPlugins
+  app.filesDroped = evt => setVal(evt.dataTransfer.files[0], stop(evt))
 
   yield Promise.all(plugins.map(p => app.load(p.code, p.storage)))
 
@@ -61,10 +61,11 @@
     fragment.appendChild(document.importNode($pluginForm.content, true))
 
     let a = $('a', $pluginItem.content)
+    let del = $('button', $pluginItem.content)
     let {content} = $pluginItem
 
     for (let plugin of plugins) {
-      a.innerText = plugin.name
+      del.dataset.name = a.innerText = plugin.name
       a.href = `/${plugin.name}/`
       fragment.appendChild(document.importNode(content, true))
     }

@@ -8,7 +8,9 @@ html, body {
   padding: 0;
   background-color: #303030;
 }
-
+body {
+  perspective: 1000px;
+}
 video {
   max-width: 100%;
 }
@@ -28,6 +30,40 @@ h3 {
 h3:hover {
   color: rgba(255,255,255,1);
   cursor: default;
+}
+
+dialog {
+	transform-origin: center top;
+	will-change: opacity, transform;
+	animation: rotateIn 600ms cubic-bezier(0.215, 0.61, 0.355, 1) forwards;
+	background: white;
+  width: 200px;
+  height: 200px;
+}
+
+@keyframes rotateIn {
+  0% {
+    opacity: 0;
+    -webkit-transform: rotateX(30deg) rotateY(30deg) translateY(300px) translateZ(200px);
+            transform: rotateX(30deg) rotateY(30deg) translateY(300px) translateZ(200px);
+  }
+  100% {
+    opacity: 1;
+    -webkit-transform: none;
+            transform: none;
+  }
+}
+
+
+@keyframes slideInUp {
+	0% {
+		opacity: 0;
+		transform: rotateX(30deg) rotateY(30deg) translateY(300px) translateZ(200px);
+	}
+	100% {
+		opacity: 1;
+		transform: none;
+	}
 }
 
 #jumbo {
