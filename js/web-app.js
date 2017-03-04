@@ -11,7 +11,7 @@
   let setVal = file => file.text().then(txt => (_code.value = txt)).catch(()=>{alert(1)})
   let stop = evt => evt && evt.stopPropagation(evt.preventDefault())
   let filesDroped = evt => setVal(evt.dataTransfer.files[0], stop(evt))
-  let plugins = yield app.getPlugins
+  let {plugins} = yield app.getPlugins
 
   yield Promise.all(plugins.map(p => app.load(p.code, p.storage)))
 

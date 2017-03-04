@@ -94,7 +94,7 @@ window.app = {
    */
   getPlugins: openDB.then(db => {
     return new Promise(rs => {
-      let items = []
+      let plugins = []
       let store = dbPlugins(db)
       let cursorRequest = store.openCursor()
       cursorRequest.onerror = console.error
@@ -102,10 +102,10 @@ window.app = {
         let cursor = evt.target.result
         if (cursor) {
           cursor.value.id = cursor.key
-          items.push(cursor.value)
+          plugins.push(cursor.value)
           cursor.continue()
         } else {
-          rs(items)
+          rs({ok: true, plugins})
         }
       }
     })
@@ -113,7 +113,7 @@ window.app = {
 
 
   addPlugin: async(function* (code) {
-    let plugins = yield app.getPlugins
+    let {plugins} = yield app.getPlugins
     let storage = Math.random()
     let url = null
 
@@ -150,7 +150,7 @@ window.app = {
   delete(plugin) {
     app.plugins[plugin].iframe.remove()
     delete app.plugins[plugin]
-    return app.getPlugins.then(plugins => {
+    return app.getPlugins.then(({plugins}) => {
       let item = plugins.find(a => a.name === plugin)
       plugins.splice(plugins.indexOf(plugins), 1)
       openDB.then(db =>
