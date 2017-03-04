@@ -18,9 +18,9 @@
       Or
       enable chrome://flags/#bypass-app-banner-engagement-checks
     -->
-    <link rel="manifest" href="/mytaste/manifest.json">
+    <!-- <link rel="manifest" href="/mytaste/manifest.json"> -->
     <link rel="apple-touch-icon" href="/img/logo.png">
-    <link rel="apple-touch-startup-image" href="/launch.png">
+    <!-- <link rel="apple-touch-startup-image" href="/launch.png"> -->
 
     <!-- Le styles -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
@@ -53,7 +53,7 @@
     <template id="$pluginForm">
       <section class="card">
         <h4 class="mdl-cell mdl-cell--12-col">Add Plugin</h4>
-        <form method="post" onsubmit="app.addPlugin(event)">
+        <form method="post" onsubmit="app.submitPlugin(event)">
           <textarea id="_code" placeholder="Enter or drag 'n drop a url, code or a file here, Then submit" name="code" required rows="3"></textarea>
           <input id="_file" type="file" accept="text/javascript" hidden onchange="app.loadPlugin(event)">
           <button id="_fileAdd" onclick="_file.click()" type="button">

@@ -25,6 +25,22 @@ window.groupCollapsed = (id, title, ...args) => {
 
 log('init', 'hybrid-app has loaded')
 
+const dbPlugins = db => db.transaction('plugins', 'readwrite').objectStore('plugins')
+const URL_REGEXP = /^[a-z][a-z\d.+-]*:\/*(?:[^:@]+(?::[^@]+)?@)?(?:[^\s:/?#]+|\[[a-f\d:]+])(?::\d+)?(?:\/[^?#]*)?(?:\?[^#]*)?(?:#.*)?$/i
+
+/**
+ * Creates a indexedDB database structure if such dose not exist
+ */
+const onupgradeneeded = event => {
+  event.target.result.createObjectStore('plugins', {autoIncrement : true})
+}
+
+const openDB = new Promise(rs => {
+  let request = indexedDB.open('tv', 1)
+  request.onupgradeneeded = onupgradeneeded
+  request.onsuccess = evt => rs(request.result)
+})
+
 window.app = {
   id: 0,
 
@@ -33,8 +49,8 @@ window.app = {
    *
    * @type {Object}
    */
-
   plugins: {},
+
   /**
    * [postMessage description]
    *
@@ -74,6 +90,59 @@ window.app = {
   },
 
   /**
+   * Load all plugins
+   */
+  getPlugins: openDB.then(db => {
+    return new Promise(rs => {
+      let items = []
+      let store = dbPlugins(db)
+      let cursorRequest = store.openCursor()
+      cursorRequest.onerror = console.error
+      cursorRequest.onsuccess = evt => {
+        let cursor = evt.target.result
+        if (cursor) {
+          cursor.value.id = cursor.key
+          items.push(cursor.value)
+          cursor.continue()
+        } else {
+          rs(items)
+        }
+      }
+    })
+  }),
+
+
+  addPlugin: async(function* (code) {
+    let plugins = yield app.getPlugins
+    let storage = Math.random()
+    let url = null
+
+    if (code.match(URL_REGEXP)) {
+      url = code
+      code = yield fetch(code).then(res => res.text())
+    }
+
+    let res = yield app.load(code, storage)
+    let plugin = {name: null, code, url, storage}
+
+    if (!res.ok) return res
+
+    plugin.name = res.data.name
+
+    let db = yield openDB
+    let store = dbPlugins(db)
+    return new Promise(rs => {
+      dbPlugins(db).add(plugin).onsuccess = event => {
+        plugin.id = event.target.result
+        plugins.push(plugin)
+        rs({ok: true, plugins})
+      }
+    })
+
+
+  }),
+
+  /**
    * [remove description]
    * @param  {[type]} plugin [description]
    * @return {[type]}        [description]
@@ -81,14 +150,21 @@ window.app = {
   delete(plugin) {
     app.plugins[plugin].iframe.remove()
     delete app.plugins[plugin]
-    log('deleted', plugin + 'has been removed')
+    return app.getPlugins.then(plugins => {
+      let item = plugins.find(a => a.name === plugin)
+      plugins.splice(plugins.indexOf(plugins), 1)
+      openDB.then(db =>
+        db.transaction('plugins', 'readwrite').objectStore('plugins').delete(item.id)
+      )
+    })
   },
 
   /**
-   * [load description]
+   * Should not be called from outside
    *
-   * @param  {[type]} code [description]
-   * @return {[type]}      [description]
+   * @private
+   * @param  {String} code plugin code to eval
+   * @return {String}      The storage it should use
    */
   load(code, storage) {
     let id = app.id++
@@ -97,7 +173,6 @@ window.app = {
     let store = localStorage[storage] ? JSON.parse(localStorage[storage]) : {}
 
     mc.port1.onmessage = evt => {
-      console.log(evt.data)
       if (evt.data.action == 'setStorage') {
         store[evt.data.key] = evt.data.value
         localStorage[storage] = JSON.stringify(store)
@@ -156,7 +231,7 @@ window.app = {
             log(id, result.data.name + ' already exist, refuse to add new plugin')
             iframe.remove()
 
-            return {ok: false, data: {message: 'A plugin with that name already exist'}}
+            return {ok: false, data: {message: `A plugin name called "${result.data.name}" already exist`}}
           }
 
           app.plugins[result.data.name] = {iframe, sendMessage}
@@ -170,7 +245,7 @@ window.app = {
 
         resolve({
           ok: false,
-          data: {message: 'could not load iframe'}
+          data: {message: 'could not load sandbox iframe'}
         })
       }
       document.body.appendChild(iframe)
