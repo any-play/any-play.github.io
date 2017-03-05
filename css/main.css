@@ -29,33 +29,6 @@ h3:hover {
   cursor: default;
 }
 
-dialog:not([open]) {
-  display: none;
-}
-
-dialog {
-  perspective: 1300px;
-  max-width: 630px;
-  background: transparent;
-  border: 0;
-}
-
-dialog form {
-  transform: rotateY(70deg);
-}
-
-dialog[open] form {
-  height: 350px;
-  background: white;
-  animation: mymove 0.3s;
-  transform: rotateY(0deg);
-  opacity: 1;
-}
-
-@keyframes mymove {
-    0%   {opacity: 0; transform: rotateY(70deg);}
-    100% {opacity: 1; transform: rotateY(0deg);}
-}
 
 header {
   background-color: #009688;

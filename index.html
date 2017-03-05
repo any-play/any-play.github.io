@@ -25,6 +25,7 @@
     <!-- Le styles -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/dialog.css">
     <link rel="stylesheet" href="https://vjs.zencdn.net/5.15.1/video-js.css">
     <link rel="stylesheet" href="/css/videojs-chromecast.css">
     <link rel="stylesheet" href="/css/videojs-airplay.css">
@@ -43,9 +44,19 @@
         <a href="/plugins">Plugins</a>
       </nav>
     </header>
-    <main id="$overview">
 
-    </main>
+    <main id="$overview"></main>
+
+    <dialog id="$settingsDialog">
+      <form class="shadow-2dp" onsubmit="app._updateSettings(event)">
+        <header><h3></h3></header>
+        <section></section>
+        <footer>
+          <button type="reset" value="Reset">Reset</button>
+          <button type="submit">Save</button>
+        </footer>
+      </form>
+    </dialog>
 
 
     <!-- list item
@@ -99,17 +110,6 @@
       </section>
     </template>
 
-    <dialog id="$settingsDialog">
-      <form class="shadow-2dp" onsubmit="app._updateSettings(event)">
-        <header><h3></h3></header>
-        <section></section>
-        <footer>
-          <button type="reset" value="Reset">Reset</button>
-          <button type="submit">Save</button>
-        </footer>
-      </form>
-    </dialog>
-
     <!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
@@ -117,6 +117,7 @@
     <script src="/js/libs/core.min.js"></script>
     <script src="/js/libs/urlsearchparams.js"></script>
     <script src="/js/libs/streams.min.js"></script>
+    <script src="/js/libs/dialog.js"></script>
     <script src="/js/libs/screw-filereader.js"></script>
     <script src="/js/libs/fetch-headers.min.js"></script>
     <script src="/js/libs/fetch.js"></script>
@@ -129,6 +130,9 @@
     <script src="/js/libs/videojs/videojs-chromecast.min.js"></script>
     <script src="/js/hybrid-app.js"></script>
     <script src="/js/web-app.js"></script>
+    <script>
+      dialogPolyfill.registerDialog(document.querySelector('dialog'))
+    </script>
     <button hidden is="google-cast-button"></button>
 
   </body>

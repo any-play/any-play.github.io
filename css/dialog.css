@@ -1,0 +1,59 @@
+dialog {
+  position: absolute;
+  left: 0; right: 0;
+  width: -moz-fit-content;
+  width: -webkit-fit-content;
+  width: fit-content;
+  height: -moz-fit-content;
+  height: -webkit-fit-content;
+  height: fit-content;
+  margin: auto;
+  border: solid;
+  padding: 1em;
+  background: white;
+  color: black;
+  display: block;
+  perspective: 1300px;
+  max-width: 630px;
+  background: transparent;
+  border: 0;
+}
+
+dialog:not([open]) {
+  display: none;
+}
+
+dialog + .backdrop {
+  position: fixed;
+  top: 0; right: 0; bottom: 0; left: 0;
+  background: rgba(0,0,0,0.1);
+}
+
+._dialog_overlay {
+  position: fixed;
+  top: 0; right: 0; bottom: 0; left: 0;
+}
+
+dialog.fixed {
+  position: fixed;
+  top: 50%;
+  transform: translate(0, -50%);
+}
+
+dialog form {
+  transform: rotateY(70deg);
+}
+
+dialog[open] form {
+  height: 350px;
+  background: white;
+  animation: mymove 0.3s;
+  transform: rotateY(0deg);
+  opacity: 1;
+}
+
+
+@keyframes mymove {
+    0%   {opacity: 0; transform: rotateY(70deg);}
+    100% {opacity: 1; transform: rotateY(0deg);}
+}

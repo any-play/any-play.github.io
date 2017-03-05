@@ -125,15 +125,16 @@
       dialog.showModal()
       $('header h3', dialog).innerText = 'Settings - ' + pluginName
       section.innerHTML = ''
-      for (let field of settings) {
+      settings.forEach((field, index) => {
         let input = document.createElement('input')
+        input.autofocus = !index
         input.type = field.type
         input.placeholder = field.placeholder
         input.defaultValue = field.defaultValue
         input.value = field.value
         input.name = field.name
         section.appendChild(input)
-      }
+      })
 
     })
   }
