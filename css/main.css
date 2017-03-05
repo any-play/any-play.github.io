@@ -8,9 +8,6 @@ html, body {
   padding: 0;
   background-color: #303030;
 }
-body {
-  perspective: 1000px;
-}
 video {
   max-width: 100%;
 }
@@ -32,57 +29,45 @@ h3:hover {
   cursor: default;
 }
 
+dialog:not([open]) {
+  display: none;
+}
+
 dialog {
-	transform-origin: center top;
-	will-change: opacity, transform;
-	animation: rotateIn 600ms cubic-bezier(0.215, 0.61, 0.355, 1) forwards;
-	background: white;
-  width: 200px;
-  height: 200px;
+  perspective: 1300px;
+  max-width: 630px;
+  background: transparent;
+  border: 0;
 }
 
-@keyframes rotateIn {
-  0% {
-    opacity: 0;
-    -webkit-transform: rotateX(30deg) rotateY(30deg) translateY(300px) translateZ(200px);
-            transform: rotateX(30deg) rotateY(30deg) translateY(300px) translateZ(200px);
-  }
-  100% {
-    opacity: 1;
-    -webkit-transform: none;
-            transform: none;
-  }
+dialog form {
+  transform: rotateY(70deg);
 }
 
-
-@keyframes slideInUp {
-	0% {
-		opacity: 0;
-		transform: rotateX(30deg) rotateY(30deg) translateY(300px) translateZ(200px);
-	}
-	100% {
-		opacity: 1;
-		transform: none;
-	}
+dialog[open] form {
+  height: 350px;
+  background: white;
+  animation: mymove 0.3s;
+  transform: rotateY(0deg);
+  opacity: 1;
 }
 
-#jumbo {
+@keyframes mymove {
+    0%   {opacity: 0; transform: rotateY(70deg);}
+    100% {opacity: 1; transform: rotateY(0deg);}
+}
+
+header {
   background-color: #009688;
 }
 
-#jumbo h3 {
-  font-size: 34px;
-  font-family: "Roboto","Helvetica","Arial",sans-serif;
-  font-weight: 400;
-  padding: 75px 40px;
-  margin: 0;
-  color: #fff;
+.shadow-2dp {
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,.14),
+              0 3px 1px -2px rgba(0,0,0,.2),
+              0 1px 5px 0 rgba(0,0,0,.12)
 }
 
-#jumbo nav {
-  background-color: #009688;
-}
-
+header h3,
 #jumbo nav a {
   padding: 0 24px;
   margin: 0;

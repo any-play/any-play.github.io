@@ -123,12 +123,29 @@
               })
           }
 
+          if (event.data.action === 'getSettings') {
+            return deferedPlugin.promise.then(app => {
+              event.ports[0].postMessage({ok: true, settings: app.settings})
+            })
+          }
+
           if (event.data.action === 'updateSettings') {
             deferedPlugin.promise.then(app => {
+              let settings
+
               if (typeof app.updateSettings !== 'function')
                 throw new Error('No updateSettings function exist')
 
-              return Promise.resolve(app.updateSettings(JSON.parse(event.data.settings))).then(() => {
+              if (typeof event.data.settings === 'string')
+                settings = Object.entries(JSON.parse(event.data.settings))
+              else {
+                settings = new FormData
+              }
+
+              for (let f of event.data.settings)
+                settings.append(...f)
+
+              return Promise.resolve(app.updateSettings(settings)).then(() => {
                 event.ports[0].postMessage({ok: true, data: ''})
               })
             }).catch(err => {

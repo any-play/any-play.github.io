@@ -94,9 +94,21 @@
     <template id="$pluginItem">
       <section class="pluginItem card">
         <a href="name" class="name"></a>
-        <button type="button" onclick="app.delete(this.dataset.name).then(app.loadPluginPage)">Delete</button>
+        <button type="button" onclick="app._delete(event)">Delete</button>
+        <button type="button" onclick="app._openSettings(event)">Settings</button>
       </section>
     </template>
+
+    <dialog id="$settingsDialog">
+      <form class="shadow-2dp" onsubmit="app._updateSettings(event)">
+        <header><h3></h3></header>
+        <section></section>
+        <footer>
+          <button type="reset" value="Reset">Reset</button>
+          <button type="submit">Save</button>
+        </footer>
+      </form>
+    </dialog>
 
     <!-- Le javascript
     ================================================== -->

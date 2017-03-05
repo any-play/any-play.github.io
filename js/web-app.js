@@ -62,10 +62,11 @@
 
     let a = $('a', $pluginItem.content)
     let del = $('button', $pluginItem.content)
+    let section = $('section', $pluginItem.content)
     let {content} = $pluginItem
 
     for (let plugin of plugins) {
-      del.dataset.name = a.innerText = plugin.name
+      section.dataset.name = del.dataset.name = a.innerText = plugin.name
       a.href = `/${plugin.name}/`
       fragment.appendChild(document.importNode(content, true))
     }
@@ -104,6 +105,44 @@
     app.addPlugin(evt.target.elements.code.value).then(res => {
       res.ok ? app.loadPluginPage() : alert(res.data.message)
     })
+  }
+
+  app._updateSettings = event => {
+    stop(event)
+
+    let fd = new FormData(event.target)
+    $settingsDialog.close()
+    app.updateSettings($settingsDialog.dataset.name, [...fd])
+  }
+
+  app._openSettings = event => {
+    let section = event.target.closest('section')
+    let pluginName = section.dataset.name
+    app.getSettings(pluginName).then(({settings}) => {
+      let dialog = window.$settingsDialog
+      let section = $('section', dialog)
+      dialog.dataset.name = pluginName
+      dialog.showModal()
+      $('header h3', dialog).innerText = 'Settings - ' + pluginName
+      section.innerHTML = ''
+      for (let field of settings) {
+        let input = document.createElement('input')
+        input.type = field.type
+        input.placeholder = field.placeholder
+        input.defaultValue = field.defaultValue
+        input.value = field.value
+        input.name = field.name
+        section.appendChild(input)
+      }
+
+    })
+  }
+
+  app._delete = event => {
+    let section = event.target.closest('section')
+    let pluginName = section.dataset.name
+    app.delete(pluginName)
+    section.remove()
   }
 
   let nav = () => {

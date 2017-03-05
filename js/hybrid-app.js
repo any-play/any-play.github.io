@@ -159,6 +159,10 @@ window.app = {
     })
   },
 
+  getSettings(plugin) {
+    return app.postMessage(plugin, { action: 'getSettings' })
+  },
+
   /**
    * Should not be called from outside
    *
@@ -177,10 +181,12 @@ window.app = {
         store[evt.data.key] = evt.data.value
         localStorage[storage] = JSON.stringify(store)
       }
+
       if (evt.data.action == 'delStorage') {
         delete store[evt.data.key]
         localStorage[storage] = JSON.stringify(store)
       }
+
       if (evt.data.action == 'clearStorage') {
         store = {}
         localStorage[storage] = JSON.stringify(store)
