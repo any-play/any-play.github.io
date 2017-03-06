@@ -59,11 +59,16 @@ window.app = {
    * @return {[type]}        [description]
    */
   postMessage(plugin, msg) {
-    if (!app.plugins[plugin]) {
-      throw new Error(`Plugin ${plugin} has not been loaded`)
-    }
+    return async(function* () {
 
-    return window.app.plugins[plugin].sendMessage(msg)
+      if (!app.plugins[plugin]) {
+        let {plugins} = yield app.getPlugins
+        let record = plugins.find(record => record.name === plugin)
+        yield app.load(record.code, record.storage)
+      }
+
+      return window.app.plugins[plugin].sendMessage(msg)
+    })()
   },
 
   /**

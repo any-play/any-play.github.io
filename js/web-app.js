@@ -13,8 +13,6 @@
   let {plugins} = yield app.getPlugins
   app.filesDroped = evt => setVal(evt.dataTransfer.files[0], stop(evt))
 
-  yield Promise.all(plugins.map(p => app.load(p.code, p.storage)))
-
   function displayContent(evt, content) {
     stop(evt)
     $overview.innerHTML = ''
