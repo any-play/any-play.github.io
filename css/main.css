@@ -3,10 +3,10 @@
 }
 
 html, body {
+  background-color: #303030;
   font-family: 'Roboto', 'Helvetica', sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #303030;
 }
 video {
   max-width: 100%;
@@ -110,7 +110,7 @@ li {
 /****************/
 /*    Loader    */
 /****************/
-.loader {
+#loader {
   background: #fafafa;
   border-radius: 50%;
   box-shadow: 0 0 4px 0px #545454;
@@ -120,13 +120,23 @@ li {
   top: 70px;
   width: 30px;
 }
-.loader:before {
+
+#loader:not(hidden) {
+  animation: fadein .5s;
+}
+
+@keyframes fadein {
+  from { opacity: 0; top: 0; }
+  to   { opacity: 1; top: 70px; }
+}
+
+#loader:before {
   content: '';
   display: block;
   padding-top: 100%;
 }
 
-.loader .circular {
+#loader .circular {
   animation: rotate 2s linear infinite;
   bottom: 0;
   height: 100%;
@@ -139,7 +149,7 @@ li {
   width: 60%;
 }
 
-.loader .path {
+#loader .path {
   animation: dash 1.5s ease-in-out infinite;
   stroke-dasharray: 1, 200;
   stroke-dashoffset: 0;

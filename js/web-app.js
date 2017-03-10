@@ -3,21 +3,23 @@
 ;(async(function* (){
   // Regex to test if code is a url and only one line...
 
-
-
   // Utilities
-  let $ = (selector, fragment) => fragment.querySelector(selector)
-  let $$ = (selector, fragment) => fragment.querySelectorAll(selector)
+  let $ = (selector, fragment = document) => fragment.querySelector(selector)
+  let $$ = (selector, fragment = document) => fragment.querySelectorAll(selector)
   let setVal = file => file.text().then(txt => (_code.value = txt)).catch(()=>{alert(1)})
   let stop = evt => evt && evt.stopPropagation(evt.preventDefault())
   let {plugins} = yield app.getPlugins
+  let loader = $('#loader')
+
   app.filesDroped = evt => setVal(evt.dataTransfer.files[0], stop(evt))
 
   function displayContent(evt, content) {
     stop(evt)
     $overview.innerHTML = ''
+    loader.hidden = false
 
     app.get(location.pathname).then(res => {
+      console.log(res)
       let fragment = new DocumentFragment
       let content = $linkItem.content
       let a = content.querySelector('a')
@@ -47,6 +49,7 @@
         }
       }
       $overview.appendChild(fragment)
+      loader.hidden = true
     })
   }
 
