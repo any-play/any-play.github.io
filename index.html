@@ -113,6 +113,16 @@
     <!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
+    <script>
+      // Rewriting HTTP url to HTTPS
+      // AnyPlay.io enforce https and don't allow mixed content
+      XMLHttpRequest = class XMLHttpRequest extends window.XMLHttpRequest {
+        open(method, url) {
+          // Force
+          return super.open(method, url.replace(/^http:\/\//i, 'https://'))
+        }
+      }
+    </script>
     <script src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js"></script>
     <script src="/js/libs/core.min.js"></script>
     <script src="/js/libs/urlsearchparams.js"></script>
