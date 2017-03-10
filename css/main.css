@@ -42,16 +42,16 @@ header {
 
 header h3,
 #jumbo nav a {
-  padding: 0 24px;
-  margin: 0;
-  text-decoration: none;
+  color: rgba(255,255,255,.6);
+  font-size: 14px;
+  font-weight: 500;
   height: 48px;
   line-height: 48px;
+  margin: 0;
+  padding: 0 24px;
   text-align: center;
-  font-weight: 500;
-  font-size: 14px;
+  text-decoration: none;
   text-transform: uppercase;
-  color: rgba(255,255,255,.6);
 }
 
 main {
@@ -63,26 +63,26 @@ li {
 }
 
 .card {
-  margin-top: 48px;
   background-color: #fff;
-  padding: 40px;
   box-shadow: 0 2px 2px 0 rgba(0,0,0,.14),
               0 3px 1px -2px rgba(0,0,0,.2),
               0 1px 5px 0 rgba(0,0,0,.12);
+  margin-top: 48px;
+  padding: 40px;
 }
 
 .horizontalMenu ul {
-  white-space: nowrap;
   list-style: none;
-  padding: 0;
   overflow-x: scroll;
+  padding: 0;
+  white-space: nowrap;
 }
 
 .horizontalMenu ul li {
   display: inline-block;
-  width: 480px;
   height: 270px;
   padding: 0;
+  width: 480px;
 }
 
 .horizontalMenu .linkItem {
@@ -91,18 +91,79 @@ li {
 }
 
 .horizontalMenu .linkItem div {
-  float: left;
-  background-repeat: no-repeat;
-  width: 100%;
-  height: 100%;
   background-color: rgb(50, 50, 50);
-  background-size: contain;
   background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  float: left;
+  height: 100%;
   transform-origin: top left;
-  transition: 1s;
   transform: scale(1);
+  transition: 1s;
+  width: 100%;
 }
 
 .horizontalMenu .linkItem:hover div {
   transform: scale(.3);
+}
+
+/****************/
+/*    Loader    */
+/****************/
+.loader {
+  background: #fafafa;
+  border-radius: 50%;
+  box-shadow: 0 0 4px 0px #545454;
+  left: 50%;
+  margin-left: -15px;
+  position: absolute;
+  top: 70px;
+  width: 30px;
+}
+.loader:before {
+  content: '';
+  display: block;
+  padding-top: 100%;
+}
+
+.loader .circular {
+  animation: rotate 2s linear infinite;
+  bottom: 0;
+  height: 100%;
+  left: 0;
+  margin: auto;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transform-origin: center center;
+  width: 60%;
+}
+
+.loader .path {
+  animation: dash 1.5s ease-in-out infinite;
+  stroke-dasharray: 1, 200;
+  stroke-dashoffset: 0;
+  stroke-linecap: round;
+  stroke: #000;
+}
+
+@keyframes rotate {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes dash {
+  0% {
+    stroke-dasharray: 1, 200;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 89, 200;
+    stroke-dashoffset: -35px;
+  }
+  100% {
+    stroke-dasharray: 89, 200;
+    stroke-dashoffset: -124px;
+  }
 }
