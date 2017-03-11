@@ -153,7 +153,7 @@ window.app = {
    * @return {[type]}        [description]
    */
   delete(plugin) {
-    app.plugins[plugin].iframe.remove()
+    app.plugins[plugin] && app.plugins[plugin].iframe.remove()
     delete app.plugins[plugin]
     return app.getPlugins.then(({plugins}) => {
       let item = plugins.find(a => a.name === plugin)
