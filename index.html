@@ -54,12 +54,28 @@
     <main id="$overview"></main>
 
     <dialog id="$settingsDialog">
-      <form class="shadow-2dp" onsubmit="app._updateSettings(event)">
+      <form class="shadow-2dp" onsubmit="app._updateSettings(event)" method="dialog">
         <header><h3></h3></header>
         <section></section>
         <footer>
           <button type="reset" value="Reset">Reset</button>
           <button type="submit">Save</button>
+        </footer>
+      </form>
+    </dialog>
+
+    <dialog id="_alert">
+      <form class="shadow-2dp" method="dialog">
+        <header><h3>Error - TV4play</h3></header>
+        <section>
+          <p>You are not authorized to see this content</p>
+          <details>
+            <summary>Stack Trace</summary>
+            <code>...</code>
+          </detail>
+        </section>
+        <footer>
+          <button type="submit" value="ok" autofocus>OK</button>
         </footer>
       </form>
     </dialog>
@@ -148,6 +164,7 @@
     <script src="/js/web-app.js"></script>
     <script>
       dialogPolyfill.registerDialog(document.querySelector('dialog'))
+      dialogPolyfill.registerDialog(document.querySelector('#_alert'))
     </script>
     <button hidden is="google-cast-button"></button>
 

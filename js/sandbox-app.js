@@ -102,11 +102,16 @@
               event.ports[0].postMessage({ ok: false, data: err.stack })
             })
 
-            try {
-              new Function('Path', event.data.code)()
-            } catch(err) {
-              deferedPlugin.reject(err)
+            let script = document.createElement('script')
+            let src = new Blob([event.data.code]).url()
+
+            window.onerror = (msg, url, lineNo, columnNo, error) => {
+              deferedPlugin.reject(error)
             }
+
+            script.src = src
+            document.body.appendChild(script)
+            window.onerror = null
           }
 
           if (event.data.action === 'dispatch') {

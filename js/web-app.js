@@ -10,6 +10,7 @@
   let stop = evt => evt && evt.stopPropagation(evt.preventDefault())
   let {plugins} = yield app.getPlugins
   let loader = $('#loader')
+  let _alert = $('#_alert')
 
   app.filesDroped = evt => setVal(evt.dataTransfer.files[0], stop(evt))
 
@@ -19,7 +20,15 @@
     loader.hidden = false
 
     app.get(location.pathname).then(res => {
-      console.log(res)
+      loader.hidden = true
+
+      if (!res.ok) {
+        _alert.showModal()
+        $('p', _alert).innerText = res.data.message
+        $('code', _alert).innerText = res.data.stack
+        return
+      }
+
       let fragment = new DocumentFragment
       let content = $linkItem.content
       let a = content.querySelector('a')
@@ -49,7 +58,6 @@
         }
       }
       $overview.appendChild(fragment)
-      loader.hidden = true
     })
   }
 
