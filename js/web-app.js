@@ -51,7 +51,7 @@
 
       if (res.data.links) {
         for (let link of res.data.links) {
-          poster.style.backgroundImage = `url(${link.poster})`
+          poster.style.backgroundImage = `url(${link.poster || 'https://dummyimage.com/480x270/000/fff&text=' + link.title})`
           a.innerText = link.title
           a.href = '/' + res.plugin + link.src
           fragment.appendChild(document.importNode($linkItem.content, true))
@@ -99,6 +99,8 @@
         $('h3', container).innerText = plugin.name
 
         for (let link of res.data.links) {
+          let text = '' + link.title
+          poster.style.backgroundImage = `url("https://dummyimage.com/480x270/000/fff&text=${text}")`
           poster.style.backgroundImage = `url(${link.poster})`
           a.innerText = link.title
           a.href = '/' +plugin.name + link.src
