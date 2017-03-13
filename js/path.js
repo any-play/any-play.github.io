@@ -418,10 +418,15 @@ function pathToRegexp (path, keys, options) {
 
 
 var routes = [/* keys, regex, handler */]
+function async(a){return(...b)=>{var c=a(...b),d=e=>e.done?Promise.resolve(e.value):Promise.resolve(e.value).then(f=>d(c.next(f)),f=>d(c.throw(f)));try{return d(c.next())}catch(e){return Promise.reject(e)}}}
 
 window.Path = {
   map(path, handler){
     let keys = []
+
+    if (handler.constructor.name === 'GeneratorFunction')
+      handler = async(handler)
+
     routes.push([keys, pathToRegexp(path, keys), handler])
   },
   dispatch(url) {

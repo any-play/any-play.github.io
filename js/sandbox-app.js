@@ -179,7 +179,7 @@
       }
 
       route(path, cb) {
-        Path.map('/' + this.name + path, values => cb(values))
+        Path.map('/' + this.name + path, cb)
       }
     }
   }
