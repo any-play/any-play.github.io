@@ -122,7 +122,6 @@
     stop(event)
 
     let fd = new FormData(event.target)
-    $settingsDialog.close()
     app.updateSettings($settingsDialog.dataset.name, [...fd])
   }
 

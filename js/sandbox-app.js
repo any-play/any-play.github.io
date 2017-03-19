@@ -46,7 +46,7 @@
 
   window.storage = new Proxy(new Storage, {
     get(oTarget, sKey) {
-      return oTarget[sKey] || oTarget.getItem(sKey) || undefined
+      return oTarget[sKey] || oTarget.getItem(sKey)
     },
     set(oTarget, sKey, vValue) {
       if (sKey in oTarget) return false
@@ -201,10 +201,33 @@
       params.set('ignoreReqHeaders', 'true')
       params.set('setReqHeaders', JSON.stringify([...headers]))
 
-      request = new Request('https://cors-adv-proxy.herokuapp.com/?' + params, request)
-      request = new Request(request, {headers: []})
+      // http://stackoverflow.com/a/34641566/1008999
+      const bodyP = request.headers.get('Content-Type') ? request.blob() : Promise.resolve()
+      return bodyP.then(body =>
+        fetch(new Request('https://cors-adv-proxy.herokuapp.com/?' + params, {
+          method: request.method,
+          body: body,
+          referrer: request.referrer,
+          referrerPolicy: request.referrerPolicy,
+          mode: request.mode,
+          cache: request.cache,
+          redirect: request.redirect,
+          integrity: request.integrity
+        })).then(res => {
+          let headers = new Headers
 
-      return fetch(request)
+          for (let [key,val] of res.headers) {
+            headers.append(key.replace('x-cors-res-set-', ''), val)
+          }
+
+          // res.headers = headers isn't enofgh
+          Object.defineProperty(res, 'headers', {
+            value: headers
+          })
+
+          return res
+        })
+      )
     }
   } else if (interFace.fetch) { // Android app method
     AnyPlay.fetch = (...args) => {
@@ -227,24 +250,6 @@
 
         return new Response(res.body, res)
       })
-    }
-  } else { // OLD METHOD
-    AnyPlay.fetch = (...args) => {
-      console.warn('Please update your app')
-
-      let request = new Request(...args)
-      let reqHeaders = new Headers(args[1] && args[1].headers || request.headers)
-      let headers = new Headers
-
-      for (let [h, v] of reqHeaders) {
-        h = h.replace(/^x-play-/, '')
-        if (unsafe_headers.includes(h.toLowerCase())) {
-          h = 'x-play-' + h
-        }
-        headers.append(h, v)
-      }
-
-      return fetch(new Request(request, {headers}))
     }
   }
 
