@@ -52,11 +52,13 @@ window.app = {
   plugins: {},
 
   /**
-   * [postMessage description]
+   * (Used internally)
+   * it will create a iframe if the plugin hasn't loaded
    *
-   * @param  {[type]} plugin [description]
-   * @param  {[type]} msg    [description]
-   * @return {[type]}        [description]
+   * @private
+   * @param  {String}  plugin [description]
+   * @param  {Mixed}   msg    [description]
+   * @return {Promise}        [description]
    */
   postMessage(plugin, msg) {
     return async(function* () {
@@ -72,10 +74,11 @@ window.app = {
   },
 
   /**
-   * [get description]
+   * Request a matching route in the plugin
+   * ex: app.get('/pluginName/categories/children')
    *
-   * @param  {[type]} url    [description]
-   * @return {[type]}        [description]
+   * @param  {String}  url    [description]
+   * @return {Promise}        [description]
    */
   get(url) {
     let plugin = url.split('/')[1]
@@ -90,6 +93,14 @@ window.app = {
     })
   },
 
+  /**
+   * The settings is not saved by AnyPlay, we simply pass
+   * this along to the plugin and let them do whatever they want with it
+   *
+   * @param {String}   plugin    The plugin name
+   * @param {Array}    settings  2D array like this: [[key, val], [key, val]]
+   * @return {Promise}
+   */
   updateSettings(plugin, settings) {
     return app.postMessage(plugin, { action: 'updateSettings', settings })
   },
