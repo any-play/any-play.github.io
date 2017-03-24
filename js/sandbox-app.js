@@ -108,12 +108,12 @@
             // This ain't working in safari where a iframe is sandboxed
             // Might do it conditionaly, since it can be easier to debug
             // let src = new Blob([event.data.code]).url()
-
+            // script.src = src
+            
             window.onerror = (msg, url, lineNo, columnNo, error) => {
               deferedPlugin.reject(error)
             }
 
-            script.src = src
             document.body.appendChild(script)
             window.onerror = null
           }
