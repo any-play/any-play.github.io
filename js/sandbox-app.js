@@ -103,7 +103,11 @@
             })
 
             let script = document.createElement('script')
-            let src = new Blob([event.data.code]).url()
+            script.innerHTML = event.data.code
+
+            // This ain't working in safari where a iframe is sandboxed
+            // Might do it conditionaly, since it can be easier to debug
+            // let src = new Blob([event.data.code]).url()
 
             window.onerror = (msg, url, lineNo, columnNo, error) => {
               deferedPlugin.reject(error)
