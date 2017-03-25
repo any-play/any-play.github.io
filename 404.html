@@ -54,7 +54,7 @@
     <main id="$overview"></main>
 
     <dialog id="$settingsDialog">
-      <form class="shadow-2dp" onsubmit="app._updateSettings(event)" method="dialog">
+      <form class="shadow-2dp" onsubmit="app._updateSettings(event)" method="dialog" autocomplete="off">
         <header><h3></h3></header>
         <section></section>
         <footer>
@@ -107,8 +107,8 @@
     ================================================== -->
     <template id="$linkItem">
       <li class="linkItem card">
-        <div class="poster"></div>
-        <h5><a href="#">channel.title</a></h5>
+        <img>
+        <a></a>
       </li>
     </template>
 
