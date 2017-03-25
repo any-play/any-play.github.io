@@ -32,6 +32,7 @@
       let fragment = new DocumentFragment
       let content = $linkItem.content
       let a = content.querySelector('a')
+      let img = content.querySelector('img')
       let poster = content.querySelector('.poster')
 
       if (res.data.video) {
@@ -51,7 +52,7 @@
 
       if (res.data.links) {
         for (let link of res.data.links) {
-          poster.style.backgroundImage = `url(${link.poster || 'https://dummyimage.com/480x270/000/fff&text=' + link.title})`
+          img.src = link.poster || 'https://dummyimage.com/480x270/000/fff&text=' + link.title
           a.innerText = link.title
           a.href = '/' + res.plugin + link.src
           fragment.appendChild(document.importNode($linkItem.content, true))
@@ -93,6 +94,7 @@
         let fragment = new DocumentFragment
         let content = $linkItem.content
         let a = content.querySelector('a')
+        content.querySelector('img').src = ''
         let poster = content.querySelector('.poster')
         let container = document.importNode($horizontalMenu.content, true)
         let section = $('ul', container)
@@ -100,8 +102,8 @@
 
         for (let link of res.data.links) {
           let text = '' + link.title
-          poster.style.backgroundImage = `url("https://dummyimage.com/480x270/000/fff&text=${text}")`
-          poster.style.backgroundImage = `url(${link.poster})`
+          a.style.backgroundImage = `url("https://dummyimage.com/480x270/000/fff&text=${text}")`
+          a.style.backgroundImage = `url(${link.poster})`
           a.innerText = link.title
           a.href = '/' +plugin.name + link.src
           section.appendChild(document.importNode($linkItem.content, true))

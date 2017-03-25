@@ -90,21 +90,25 @@ li {
   margin-right: 10px;
 }
 
-.horizontalMenu .linkItem div {
+.horizontalMenu .linkItem a {
   background-color: rgb(50, 50, 50);
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
   float: left;
   height: 100%;
-  transform-origin: top left;
-  transform: scale(1);
-  transition: 1s;
   width: 100%;
+  display: block;
 }
 
-.horizontalMenu .linkItem:hover div {
+/*.horizontalMenu .linkItem:hover div {
   transform: scale(.3);
+}*/
+
+.linkItem img {
+  vertical-align: middle;
+  max-width: 120px;
+  max-height: 67.5px;
 }
 
 /****************/
