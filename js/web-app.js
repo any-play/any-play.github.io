@@ -36,6 +36,8 @@
       let img = content.querySelector('img')
       let poster = content.querySelector('.poster')
 
+      a.style.backgroundImage = ``
+
       if (res.data.video) {
         let video = document.createElement('video')
         video.controls = true
@@ -103,8 +105,8 @@
 
         for (let link of res.data.links) {
           let text = '' + link.title
-          // a.style.backgroundImage = `url("https://dummyimage.com/480x270/000/fff&text=${text}")`
-          // a.style.backgroundImage = `url(${link.poster})`
+          a.style.backgroundImage = `url("https://dummyimage.com/480x270/000/fff&text=${text}")`
+          a.style.backgroundImage = `url(${link.poster})`
           a.innerText = link.title
           a.href = '/' +plugin.name + link.src
           section.appendChild(document.importNode($linkItem.content, true))
