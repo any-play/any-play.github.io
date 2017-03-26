@@ -11,6 +11,7 @@
   let {plugins} = yield app.getPlugins
   let loader = $('#loader')
   let _alert = $('#_alert')
+  let uuid = 0
 
   app.filesDroped = evt => setVal(evt.dataTransfer.files[0], stop(evt))
 
@@ -138,14 +139,25 @@
       $('header h3', dialog).innerText = 'Settings - ' + pluginName
       section.innerHTML = ''
       settings.forEach((field, index) => {
+        let container = document.createElement('div')
+        let label = document.createElement('label')
         let input = document.createElement('input')
+        container.className = 'input-container'
+
+        input.id = 'input_' + (uuid++)
         input.autofocus = !index
         input.type = field.type
-        input.placeholder = field.placeholder
         input.defaultValue = field.defaultValue
         input.value = field.value
         input.name = field.name
-        section.appendChild(input)
+        input.placeholder = ' '
+
+        label.innerText = field.placeholder
+        label.htmlFor = input.id
+
+        container.appendChild(input)
+        container.appendChild(label)
+        section.appendChild(container)
       })
 
     })
