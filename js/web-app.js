@@ -154,7 +154,7 @@
         input.name = field.name
         input.placeholder = ' '
 
-        label.innerText = field.placeholder
+        label.innerText = field.label
         label.htmlFor = input.id
 
         container.appendChild(input)
