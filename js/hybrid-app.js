@@ -164,18 +164,16 @@ window.app = {
    * @return {[type]}        [description]
    */
   delete(plugin) {
-    return new Promise(rs => {
-      app.plugins[plugin] && app.plugins[plugin].iframe.remove()
-      delete app.plugins[plugin]
-      return app.getPlugins.then(({plugins}) => {
-        let item = plugins.find(a => a.name === plugin)
-        localStorage.removeItem(item.storage)
-        plugins.splice(plugins.indexOf(plugins), 1)
-        openDB.then(db =>
-          db.transaction('plugins', 'readwrite').objectStore('plugins').delete(item.id)
-        )
-        rs({ok: true, plugins})
-      })
+    app.plugins[plugin] && app.plugins[plugin].iframe.remove()
+    delete app.plugins[plugin]
+    return app.getPlugins.then(({plugins}) => {
+      let item = plugins.find(a => a.name === plugin)
+      localStorage.removeItem(item.storage)
+      plugins.splice(plugins.indexOf(item), 1)
+      openDB.then(db =>
+        db.transaction('plugins', 'readwrite').objectStore('plugins').delete(item.id)
+      )
+      return {ok: true, plugins}
     })
   },
 
