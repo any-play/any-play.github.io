@@ -283,6 +283,6 @@
     return end.map((end, i) => rand(sub[i], end)).join('.')
   }
 
-  AnyPlay.randomIPv4 = country => parseCIDR(country_ip_map[country])
+  AnyPlay.randomIPv4 = country => parseCIDR(country_ip_map[country.toUpperCase()])
 
 })();
