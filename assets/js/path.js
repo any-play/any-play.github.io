@@ -418,19 +418,21 @@ function pathToRegexp (path, keys, options) {
 
 
 var routes = [/* keys, regex, handler */]
+var memory = {}
+
 function async(a){return(...b)=>{var c=a(...b),d=e=>e.done?Promise.resolve(e.value):Promise.resolve(e.value).then(f=>d(c.next(f)),f=>d(c.throw(f)));try{return d(c.next())}catch(e){return Promise.reject(e)}}}
 
 window.Path = {
-  map(path, handler){
+  map(path, handler, strategy) {
     let keys = []
 
     if (handler.constructor.name === 'GeneratorFunction')
       handler = async(handler)
 
-    routes.push([keys, pathToRegexp(path, keys), handler])
+    routes.push([keys, pathToRegexp(path, keys), handler, strategy])
   },
   dispatch(url) {
-    for (let [keys, re, handler] of routes) {
+    for (let [keys, re, handler, strategy] of routes) {
       var values = {}
       var match = re.exec(url)
 
@@ -440,9 +442,78 @@ window.Path = {
         values[key.name] = match[index + 1]
       })
 
+      if (strategy === 'memoryOnly') {
+        if (memory[url])
+          return Promise.resolve(memory[url])
+        else {
+          return memory[url] = Promise.resolve(handler(values)).catch(err => {
+            delete memory[url]
+            return Promise.reject(err)
+          })
+        }
+      }
+
+      if (strategy === 'memoryFirst') {
+        if (memory[url]) {
+          last = memory[url]
+
+          Promise.resolve(handler(values)).then(res => {
+            memory[url] = res
+          })
+
+          return Promise.resolve(last)
+        }
+        else {
+          return Promise.resolve(handler(values)).then(res => (
+            memory[url] = res
+          ))
+        }
+      }
+
+      if (strategy === 'cacheOnly') {
+        if (storage['$co$' + url])
+          return Promise.resolve(storage['$co$' + url])
+        else {
+          return Promise.resolve(handler(values))
+          .then(res => (
+            storage['$co$' + url] = res
+          ))
+          .catch(err => {
+            delete storage['$co$' + url]
+            return Promise.reject(err)
+          })
+        }
+      }
+
+      if (strategy === 'cacheFirst') {
+        if (storage['$cf$' + url]) {
+          last = storage['$cf$' + url]
+
+          Promise.resolve(handler(values)).then(res => {
+            storage['$cf$' + url] = res
+          })
+
+          return Promise.resolve(last)
+        }
+        else {
+          return Promise.resolve(handler(values)).then(res => (
+            storage['$cf$' + url] = res
+          ))
+        }
+      }
+
+      // cacheFirst
+      // cacheOnly
+      // sessionFirst
+      // sessionOnly
+      // memoryFirst
+      // memoryOnly
+      // networkOnly
+      // networkFirst
+
       return Promise.resolve(handler(values))
     }
-    return Promise.reject(new Error('No route was matched agains ' + url))
+    return Promise.reject(new Error('No route was matched against ' + url))
   }
 }
 

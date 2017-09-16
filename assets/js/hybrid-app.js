@@ -2,6 +2,34 @@ function async(a){return(...b)=>{var c=a(...b),d=e=>e.done?Promise.resolve(e.val
 
 window.jsonp = uuid => result => AnyPlay.callback(uuid, JSON.stringify(result))
 
+if (!window.AbortController) {
+
+  class AbortSignal {
+    constructor() {
+      const delegate = document.createDocumentFragment()
+      const methods = ['addEventListener', 'dispatchEvent', 'removeEventListener']
+
+      methods.forEach(method =>
+        this[method] = (...args) => delegate[method](...args)
+      )
+
+      this.aborted = false
+    }
+  }
+
+  class AbortController {
+    constructor() {
+      this.signal = new AbortSignal
+    }
+    abort() {
+      this.signal.aborted = true
+      this.signal.dispatchEvent(new Event('abort'))
+    }
+  }
+
+  window.AbortController = AbortController
+}
+
 if (window.AnyPlay) {
   window.log = (id, ...args) => {
     let msg = `[${id}] `
@@ -80,17 +108,33 @@ window.app = {
    * @param  {String}  url    [description]
    * @return {Promise}        [description]
    */
-  get(url) {
-    let plugin = url.split('/')[1]
-    let id = app.id++
-    log(`app.get [${plugin}-${id}]`, 'requesting url: ' + url)
-
-    return app.postMessage(plugin, { action: 'dispatch', url })
+  get(url, init) {
+    const id = app.id++
+    const plugin = url.split('/')[1]
+    const request = app.postMessage(plugin, { action: 'dispatch', url })
     .then(response => {
       log(`app.get [${plugin}-${id}]`, 'response: ', response)
       response.plugin = plugin
       return response
     })
+
+    log(`app.get [${plugin}-${id}]`, 'requesting url: ' + url)
+
+    if (init && init.signal) {
+      // // Turn an event into a promise, reject it once `abort` is dispatched
+      const cancellation = new Promise((_, reject) => {
+        init.signal.addEventListener(
+          'abort',
+          () => reject(new DOMException('Aborted', 'AbortError')),
+          {once: true}
+        )
+      })
+
+      return Promise.race([cancellation, request])
+    }
+
+    // Return the fastest promise (don't need to wait for request to finish)
+    return request
   },
 
   /**
@@ -220,7 +264,7 @@ window.app = {
       })
     }
 
-    iframe.src = '/views/sandbox.html'
+    iframe.src = '/assets/views/sandbox.html'
     iframe.hidden = true
     iframe.sandbox = 'allow-scripts'
     iframe.referrerPolicy = 'unsafe-url'

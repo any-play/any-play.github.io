@@ -366,6 +366,24 @@
         }
       })
 
+      if (request.signal) {
+        const abortError = new DOMException('Aborted', 'AbortError')
+
+        // Return early if already aborted, thus avoiding making an HTTP request
+        if (init.signal.aborted) {
+          return reject(abortError)
+        }
+
+        // Turn an event into a promise, reject it once `abort` is dispatched
+        const cancellation = new Promise((_, reject) => {
+          init.signal.addEventListener(
+            'abort',
+            () => xhr.abort(reject(abortError)),
+            {once: true}
+          )
+        })
+      }
+
       xhr.onreadystatechange = () => {
         if (xhr.readyState === xhr.HEADERS_RECEIVED) {
           resolve(new Response(rs, {
@@ -392,5 +410,4 @@
         : xhr.send()
     })
   }
-  self.fetch.polyfill = true
 })(this);

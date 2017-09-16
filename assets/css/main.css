@@ -20,11 +20,11 @@ input[type="file"] {
   color: transparent;
 }
 
-h3 {
+.horizontalMenu h3 {
   color: rgba(255,255,255,.6);
 }
 
-h3:hover {
+.horizontalMenu h3:hover {
   color: rgba(255,255,255,1);
   cursor: default;
 }
@@ -88,17 +88,33 @@ li {
 .horizontalMenu .linkItem {
   background-color: white;
   margin-right: 10px;
+  position: relative;
+}
+
+.horizontalMenu a img {
+  max-height: 100%;
+  max-width: 100%;
 }
 
 .horizontalMenu .linkItem a {
   background-color: rgb(50, 50, 50);
   background-position: center;
   background-repeat: no-repeat;
-  background-size: contain;
-  float: left;
+  /*background-size: 101%;*/
+  /*float: left;*/
   height: 100%;
   width: 100%;
   display: block;
+  text-align: center;
+  float: left;
+}
+
+.horizontalMenu .linkItem span {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  color: white;
+  background-color: rgba(0,0,0,0.5)
 }
 
 /*.horizontalMenu .linkItem:hover div {

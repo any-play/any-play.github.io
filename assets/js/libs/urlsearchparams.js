@@ -1,4 +1,4 @@
-const secret = Symbol('secret')
+const secret = Symbol()
 const find = /[!'\(\)~]|%20|%00/g
 const plus = /\+/g
 const replace = {
@@ -95,6 +95,15 @@ class URLSearchParams {
     }
   }
 
+  sort() {
+    var sorted = [...this].sort((a, b) =>
+      a[0] < b[0] ? -1 :
+      a[0] > b[0] ? 1 : 0
+    )
+    this[secret] = Object.create(null)
+    sorted.forEach(a => this.append(...a))
+  }
+
   toJSON() {
     return {}
   }
@@ -106,12 +115,11 @@ class URLSearchParams {
   toString() {
     const dict = this[secret]
     const query = []
-    let i, key, name, value
 
-    for (key in dict) {
-      name = encode(key);
-      for (i = 0, value = dict[key]; i < value.length; i++) {
-        query.push(`${name}=${encode(value[i])}`)
+    for (let key in dict) {
+      let name = encode(key);
+      for (let value of dict[key]) {
+        query.push(`${name}=${encode(value)}`)
       }
     }
     return query.join('&')
