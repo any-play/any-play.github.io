@@ -38,7 +38,6 @@ const strategies = {
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
   const strategyToUse = url.searchParams.get('strategy');
-
   if (strategyToUse in strategies) {
     event.respondWith(
       strategies[strategyToUse].handle({event})

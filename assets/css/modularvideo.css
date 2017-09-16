@@ -1,0 +1,19 @@
+.mv * {
+  box-sizing: border-box;
+}
+
+.mv .mv-controls-panel {
+  display: flex;
+}
+
+.mv .mv-controls-panel > * {
+  display: flex;
+  background-color: initial;
+  color: inherit;
+  flex: 0 0 auto;
+  padding: 5px;
+  border-width: 0px;
+  outline: none;
+}
+.mv.playing .mv-play {display: none}
+.mv.playing .mv-pause {display: none}

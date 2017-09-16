@@ -2,6 +2,18 @@
 <html>
   <head>
     <title>AnyPlay</title>
+    <script>
+      // if ('serviceWorker' in navigator) {
+      //   navigator.serviceWorker.register('/sw.js', {scope: '/'})
+      //   .then(function(reg) {
+      //     // registration worked
+      //     console.log('Registration succeeded. Scope is ' + reg.scope)
+      //   }).catch(function(error) {
+      //     // registration failed
+      //     console.log('Registration failed with ' + error)
+      //   })
+      // }
+    </script>
 
     <!-- Le meta -->
     <meta charset="utf-8">
@@ -12,6 +24,8 @@
     <meta name="apple-mobile-web-app-title" content="AnyPlay">
     <meta name="apple-mobile-web-app-capable" content="yes">
 
+    <link rel="prefetch" href="https://cdn.dashjs.org/latest/dash.all.min.js">
+    <link rel="prerender" href="/views/sandbox.html">
     <!--
       Criteria to show the banner
       Be visited by the user twice, over two separate days during the course of two weeks.
@@ -24,36 +38,35 @@
 
     <!-- Le styles -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <link rel="stylesheet" href="/css/main.css">
-    <link rel="stylesheet" href="/css/dialog.css">
-    <link rel="stylesheet" href="https://vjs.zencdn.net/5.15.1/video-js.css">
-    <link rel="stylesheet" href="/css/videojs-chromecast.css">
-    <link rel="stylesheet" href="/css/videojs-airplay.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mediaelement/4.2.5/mediaelementplayer.min.css" integrity="sha256-t9iCFBfc2uD8G4ZIXpBe4H83k1lF5j+t0ud4EyjcBys=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="/assets/css/dialog.css">
 
     <!-- Le fav and touch icons -->
     <link href="/img/logo.png" rel="shortcut icon">
   </head>
   <body>
+    <div id="app">
+      <div id="loader" hidden>
+        <svg class="circular" viewBox="25 25 50 50">
+          <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="4" stroke-miterlimit="10"></circle>
+        </svg>
+      </div>
 
-    <div id="loader" hidden>
-      <svg class="circular" viewBox="25 25 50 50">
-        <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="4" stroke-miterlimit="10"/>
-      </svg>
+      <!-- header
+      ================================================== -->
+      <header id="jumbo">
+        <!-- <h3>AnyPlay</h3> -->
+        <nav>
+          <a href="/">Start</a>
+          <a href="/plugins">Plugins</a>
+        </nav>
+      </header>
+
+      <main id="$overview"></main>
     </div>
 
-    <!-- header
-    ================================================== -->
-    <header id="jumbo">
-      <!-- <h3>AnyPlay</h3> -->
-      <nav>
-        <a href="/">Start</a>
-        <a href="/plugins">Plugins</a>
-      </nav>
-    </header>
-
-    <main id="$overview"></main>
-
-    <dialog id="$settingsDialog">
+    <dialog id="_settingsDialog">
       <form class="shadow-2dp" onsubmit="app._updateSettings(event)" method="dialog" autocomplete="off" style="width: 300px">
         <header><h3></h3></header>
         <section></section>
@@ -72,7 +85,7 @@
           <details>
             <summary>Stack Trace</summary>
             <code></code>
-          </detail>
+          </details>
         </section>
         <footer>
           <button type="submit" value="ok" autofocus>OK</button>
@@ -85,14 +98,15 @@
     ================================================== -->
     <template id="$pluginForm">
       <section class="card">
-        <h4 class="mdl-cell mdl-cell--12-col">Add Plugin</h4>
-        <form method="post" onsubmit="app.submitPlugin(event)">
+        <h4>Add Plugin</h4>
+        <form onsubmit="app.submitPlugin(event)">
           <textarea ondrop="app.filesDroped(event)" id="_code" placeholder="Enter or drag 'n drop a url, code or a file here, Then submit" name="code" required rows="3"></textarea>
+          <p><small>When adding a plugin, you agree to our <a href="/legal/terms-of-use">terms of use</a> and <a href="/legal/privacy">privacy</a></small></p>
           <input id="_file" type="file" accept="text/javascript" hidden onchange="app.loadPlugin(event)">
           <button id="_fileAdd" onclick="_file.click()" type="button">
             Choose file
           </button>
-          <button onclick="_code.value = location.origin + '/js/sample.js'" type="button">
+          <button onclick="_code.value = location.origin + '/assets/js/sample.js'" type="button">
             load sample.js
           </button>
           <button type="submit">
@@ -103,70 +117,44 @@
     </template>
 
 
-    <!-- link item
-    ================================================== -->
-    <template id="$linkItem">
-      <li class="linkItem card">
-        <img>
-        <a></a>
-      </li>
-    </template>
-
-
-    <!-- link item
-    ================================================== -->
-    <template id="$horizontalMenu">
-      <section class="horizontalMenu">
-        <h3>title</h3>
-        <ul></ul>
-      </section>
-    </template>
-
-    <!-- list item
-    ================================================== -->
-    <template id="$pluginItem">
-      <section class="pluginItem card">
-        <a href="name" class="name"></a>
-        <button type="button" onclick="app._delete(event)">Delete</button>
-        <button type="button" onclick="app._openSettings(event)">Settings</button>
-      </section>
-    </template>
-
     <!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script>
       // Rewriting HTTP url to HTTPS
       // AnyPlay.io enforce https and don't allow mixed content
-      XMLHttpRequest = class XMLHttpRequest extends window.XMLHttpRequest {
-        open(method, url) {
-          // Force
-          return super.open(method, url.replace(/^http:\/\//i, 'https://'))
-        }
-      }
+      // XMLHttpRequest = class XMLHttpRequest extends window.XMLHttpRequest {
+      //   open(method, url) {
+      //     // Force
+      //     return super.open(method, url.replace(/^http:\/\//i, 'https://'))
+      //   }
+      // }
     </script>
-    <script src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js"></script>
-    <script src="/js/libs/core.min.js"></script>
-    <script src="/js/libs/urlsearchparams.js"></script>
-    <script src="/js/libs/streams.min.js"></script>
-    <script src="/js/libs/dialog.js"></script>
-    <script src="/js/libs/screw-filereader.js"></script>
-    <script src="/js/libs/fetch-headers.min.js"></script>
-    <script src="/js/libs/fetch.js"></script>
-    <script src="/js/libs/videojs/videojs.min.js"></script>
-    <script src="/js/libs/videojs/videojs-dash.min.js"></script>
-    <script src="/js/libs/videojs/videojs-airplay.js"></script>
-    <script src="/js/libs/videojs/videojs-contrib-quality-levels.min.js"></script>
-    <script src="/js/libs/videojs/videojs-contrib-hls.js"></script>
-    <script src="/js/libs/videojs/videojs-contrib-dash.js"></script>
-    <script src="/js/libs/videojs/videojs-chromecast.min.js"></script>
-    <script src="/js/hybrid-app.js"></script>
-    <script src="/js/web-app.js"></script>
+
+    <script src="https://cdn.dashjs.org/latest/dash.all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mediaelement/4.2.5/mediaelement-and-player.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mediaelement-plugins/2.4.0/chromecast/chromecast.min.js" integrity="sha256-6L9K4YFg+0CHD2dGtVhmlFhhZIDt4cBH9GjljmZMadM=" crossorigin="anonymous"></script>
+    <script src="/assets/js/libs/core.min.js"></script>
+    <script src="/assets/js/libs/urlsearchparams.js"></script>
+    <script src="/assets/js/libs/streams.min.js"></script>
+    <script src="/assets/js/libs/dialog.js"></script>
+    <script src="/assets/js/libs/screw-filereader.js"></script>
+    <script src="/assets/js/libs/fetch-headers.min.js"></script>
+    <script src="/assets/js/libs/fetch.js"></script>
+    <script src="/assets/js/hybrid-app.js"></script>
+    <script src="/assets/js/modularvideo.js"></script>
+    <script src="/assets/js/web-app.js"></script>
     <script>
-      dialogPolyfill.registerDialog(document.querySelector('dialog'))
+      dialogPolyfill.registerDialog(document.querySelector('#_settingsDialog'))
       dialogPolyfill.registerDialog(document.querySelector('#_alert'))
     </script>
-    <button hidden is="google-cast-button"></button>
-
+    <script>{ // scope, don't remove
+      let iterator = document.createNodeIterator(document, 128)
+      let curNode
+      while (curNode = iterator.nextNode()) {
+        curNode.remove()
+      }
+      document.querySelectorAll('script').forEach(a => a.remove())
+    }</script>
   </body>
 </html>
