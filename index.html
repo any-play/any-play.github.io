@@ -123,12 +123,12 @@
     <script>
       // Rewriting HTTP url to HTTPS
       // AnyPlay.io enforce https and don't allow mixed content
-      // XMLHttpRequest = class XMLHttpRequest extends window.XMLHttpRequest {
-      //   open(method, url) {
-      //     // Force
-      //     return super.open(method, url.replace(/^http:\/\//i, 'https://'))
-      //   }
-      // }
+      XMLHttpRequest = class XMLHttpRequest extends window.XMLHttpRequest {
+        open(method, url) {
+          // Force
+          return super.open(method, url.replace(/^http:\/\//i, 'https://'))
+        }
+      }
     </script>
 
     <script src="https://cdn.dashjs.org/latest/dash.all.min.js"></script>
