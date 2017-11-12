@@ -211,18 +211,18 @@
       let params = new URLSearchParams
       let headers = new Headers(args[1] && args[1].headers || request.headers)
 
-      const url = new URL(request.url);
-      const strategy = url.searchParams.get('strategy')
-
-      if (strategy !== null) {
-        url.searchParams.delete('strategy')
-        params.set('strategy', strategy)
-      }
+      // const url = new URL(request.url);
+      // const strategy = url.searchParams.get('strategy')
+      //
+      // if (strategy !== null) {
+      //   url.searchParams.delete('strategy')
+      //   params.set('strategy', strategy)
+      // }
 
       params.set('url', url)
       params.set('ignoreReqHeaders', 'true')
       params.set('setReqHeaders', JSON.stringify([...headers]))
-
+      request.redirect !== 'follow' && params.set('noFollow', 'true')
 
       // http://stackoverflow.com/a/34641566/1008999
       const bodyP = request.headers.get('Content-Type') ? request.blob() : Promise.resolve()
@@ -242,6 +242,8 @@
           for (let [key,val] of res.headers) {
             headers.append(key.replace('x-cors-res-set-', ''), val)
           }
+
+
 
           // res.headers = headers isn't enofgh
           Object.defineProperty(res, 'headers', {

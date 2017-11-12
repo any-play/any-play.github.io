@@ -108,6 +108,7 @@
 
     return node
   }
+
   let $ = (selector, fragment = document) => fragment.querySelector(selector)
   let setVal = file => file.text().then(txt => (_code.value = txt)).catch(()=>{alert(1)})
   let stop = evt => evt && evt.stopPropagation(evt.preventDefault())
@@ -155,12 +156,12 @@
           features: [
             'prevtrack', 'playpause', 'nexttrack', 'current', 'progress',
             'duration', 'speed', 'skipback', 'jumpforward', 'markers', 'volume',
-		        'playlist', 'loop', 'shuffle', 'contextmenu', 'fullscreen'
+		        'playlist', 'loop', 'shuffle', 'contextmenu', 'fullscreen', 'chromecast'
           ]
         })
 
         player.setSrc(res.data.video.source)
-        setTimeout(() => player.play(), 0)
+        player.play()
       }
 
 

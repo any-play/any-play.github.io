@@ -73,7 +73,7 @@ li {
 
 .horizontalMenu ul {
   list-style: none;
-  overflow-x: scroll;
+  overflow-x: auto;
   padding: 0;
   white-space: nowrap;
 }
@@ -241,4 +241,45 @@ li {
 .input-container input:not(:placeholder-shown) ~ label {
   transform: translate3d(0, -20px, 0) scale(.75);
   transition: transform .4s cubic-bezier(.25,.8,.25,1);
+}
+
+
+
+.horizontalMenu ul::-webkit-scrollbar {
+	width: 12px;
+	height: 10px
+}
+.horizontalMenu ul::-webkit-scrollbar-corner {
+	background-color: #121314
+}
+.horizontalMenu ul::-webkit-scrollbar-track {
+	background: #1f1e1e
+}
+.horizontalMenu ul::-webkit-scrollbar-thumb {
+	background: #333;
+	border-radius: 2px
+}
+.horizontalMenu ul::-webkit-scrollbar-thumb:hover {
+	background: rgba(230, 0, 6, .7)
+}
+
+.horizontalMenu ul::-webkit-scrollbar {
+	height: 8px;
+	width: 8px
+}
+.horizontalMenu ul::-webkit-scrollbar {
+	width: 8px;
+	height: 8px
+}
+.horizontalMenu ul::-webkit-scrollbar-track {
+	background: #111;
+	border-radius: 2px
+}
+.horizontalMenu ul::-webkit-scrollbar-thumb {
+	background: rgba(0, 0, 0, .35);
+	border-radius: 2px
+}
+.horizontalMenu ul::-webkit-scrollbar-thumb,
+.horizontalMenu ul::-webkit-scrollbar-thumb {
+	background: rgba(230, 0, 6, .7)
 }
