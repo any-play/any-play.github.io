@@ -240,7 +240,7 @@
           let headers = new Headers
 
           for (let [key,val] of res.headers) {
-            headers.append(key.replace('x-cors-res-set-', ''), val)
+            headers.append(key.replace('x-cors-', ''), val)
           }
 
 
