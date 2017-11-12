@@ -27,7 +27,7 @@
       this[secret] = Object.create(null)
 
       if (!query) return
-
+      console.log(query[Symbol.iterator])
       if (typeof query === 'string') {
         if (query.charAt(0) === '?')
           query = query.slice(1)
@@ -44,9 +44,10 @@
             this.append(decode(value), '')
           }
         }
-      } else if (query[Symbol.iterator] === 'function') {
-        for (let pair of query)
-          this.append(...pair)
+      } else if (typeof query[Symbol.iterator] === 'function') {
+        console.log(query)
+        for (let [name, value] of query)
+          this.append(name, value)
       } else {
         for (let pair of Object.entries(query))
           this.append(...pair)
