@@ -211,7 +211,7 @@
       let params = new URLSearchParams
       let headers = new Headers(args[1] && args[1].headers || request.headers)
 
-      // const url = new URL(request.url);
+      const url = new URL(request.url);
       // const strategy = url.searchParams.get('strategy')
       //
       // if (strategy !== null) {
