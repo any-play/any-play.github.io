@@ -1,10 +1,15 @@
 var app = new AnyPlay.Plugin('sample')
-var json = fetch('https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/f.json')
-.then(res => res.json())
-.then(data => data.categories[0])
+
+function getJson() {
+  var p = fetch('https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/f.json')
+  .then(res => res.json())
+  .then(data => data.categories[0])
+  getJson = () => p
+  return p
+}
 
 app.route('/', values => {
-  return json.then(data => {
+  return getJson().then(data => {
     let links = data.videos.map((video, index) => {
       return {
         src: '/' + index.toString(),
@@ -19,10 +24,10 @@ app.route('/', values => {
       links: links
     }
   })
-})
+}, 'cacheOnly')
 
 app.route('/:pid', values => {
-  return json.then(data => {
+  return getJson().then(data => {
     let video = data.videos[parseInt(values.pid)]
 
     return {
@@ -36,4 +41,4 @@ app.route('/:pid', values => {
       }
     }
   })
-})
+}, 'cacheOnly')
