@@ -2,10 +2,10 @@ var app = new AnyPlay.Plugin('sample')
 var api = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/f.json'
 
 function getJson() {
-  if (store.json) return store.json
+  if (storage.json) return storage.json
 
   var p = fetch(api).then(res => res.json())
-  .then(data => (store.json = data.categories[0]))
+  .then(data => (storage.json = data.categories[0]))
 
   getJson = () => p
 
