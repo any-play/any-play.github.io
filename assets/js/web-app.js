@@ -150,7 +150,8 @@
       }
 
       if (res.data.video && res.data.video.source.length) {
-        const video = el('video')
+        const video = el('video', {style: {maxWidth: '100%'}})
+
         el($overview, video)
         const player = window.player = new MediaElementPlayer(video, {
           features: [
