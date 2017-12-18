@@ -69,6 +69,19 @@ const openDB = new Promise(rs => {
   request.onsuccess = evt => rs(request.result)
 })
 
+window.onmessage = async function(evt) {
+  const res = await fetch(evt.data.url, evt.data.request)
+  const buffer = await res.arrayBuffer()
+
+  evt.ports[0].postMessage([
+    buffer,
+    {
+      status: res.status,
+      headers: [...res.headers]
+    }
+  ])
+}
+
 window.app = {
   id: 0,
 
@@ -198,8 +211,6 @@ window.app = {
         rs({ok: true, plugins})
       }
     })
-
-
   }),
 
   /**

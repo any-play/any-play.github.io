@@ -202,10 +202,7 @@
   //   'te', 'trailer', 'transfer-encoding', 'upgrade', 'user-agent', 'via'
   // ]
 
-  if (window.AnyPlay.platform === 'electron') {
-    window.fetch = window.AnyPlay.fetch = interFace.fetch
-  }
-  else if (window.AnyPlay.platform === 'webapp') {
+  if (window.AnyPlay.platform === 'webapp') {
     window.AnyPlay.fetch = (...args) => { // Webapp proxy method
       let request = new Request(...args)
       let params = new URLSearchParams
@@ -224,35 +221,52 @@
       params.set('setReqHeaders', JSON.stringify([...headers]))
       request.redirect !== 'follow' && params.set('noFollow', 'true')
 
-      // http://stackoverflow.com/a/34641566/1008999
-      const bodyP = request.headers.get('Content-Type') ? request.blob() : Promise.resolve()
-      return bodyP.then(body =>
-        fetch(new Request('https://cors-adv-proxy.herokuapp.com/?' + params, {
-          method: request.method,
-          body: body,
-          referrer: request.referrer,
-          referrerPolicy: request.referrerPolicy,
-          mode: request.mode,
-          cache: request.cache,
-          redirect: request.redirect,
-          integrity: request.integrity
-        })).then(res => {
-          let headers = new Headers
 
-          for (let [key,val] of res.headers) {
-            headers.append(key.replace('x-cors-', ''), val)
+
+      function sendMessage(message) {
+        return new Promise((resolve, reject) => {
+          let messageChannel = new MessageChannel
+          mc.port1.postMessage(message, [messageChannel.port2])
+        })
+      }
+
+      // http://stackoverflow.com/a/34641566/1008999
+      const bodyP = request.headers.get('Content-Type') ? request.arrayBuffer() : Promise.resolve()
+      return bodyP.then(body => {
+        return new Promise((rs, rj) => {
+          const channel = new MessageChannel
+          channel.port1.onmessage = evt => {
+            let res = new Response(evt.data[0], {status: evt.status})
+            let headers = new Headers
+
+            for (let [key,val] of res.headers) {
+              headers.append(key.replace('x-cors-', ''), val)
+            }
+
+            // res.headers = headers isn't enofgh
+            Object.defineProperty(res, 'headers', {
+              value: headers
+            })
+
+            rs(res)
           }
 
-
-
-          // res.headers = headers isn't enofgh
-          Object.defineProperty(res, 'headers', {
-            value: headers
-          })
-
-          return res
+          // Ask top frame to make the request for us.
+          top.postMessage({
+            url: 'https://cors-adv-proxy.herokuapp.com/?' + params,
+            request: {
+              method: request.method,
+              body: body,
+              referrer: request.referrer,
+              referrerPolicy: request.referrerPolicy,
+              mode: request.mode,
+              cache: request.cache,
+              redirect: request.redirect,
+              integrity: request.integrity
+            }
+          }, '*', [channel.port2])
         })
-      )
+      })
     }
   }
   else if (interFace.fetch) { // Android app method

@@ -120,7 +120,15 @@
     changes.forEach(function(change) {
       if (!change.isIntersecting) return
       var el = change.target
-      el.src = el.dataset.src
+
+      // request(el.dataset.src)
+      // .then(res => res.blob())
+      // .then(blob => blob.image())
+      // .then(img => el.replaceWith(img))
+      var url = new URL(el.dataset.src)
+      url.searchParams.set('strategy', 'cacheFirst')
+      el.src = url
+      delete el.dataset.src
       observer.unobserve(el)
     })
   }, {
