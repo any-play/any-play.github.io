@@ -3,16 +3,16 @@
   <head>
     <title>AnyPlay</title>
     <script>
-      // if ('serviceWorker' in navigator) {
-      //   navigator.serviceWorker.register('/sw.js', {scope: '/'})
-      //   .then(function(reg) {
-      //     // registration worked
-      //     console.log('Registration succeeded. Scope is ' + reg.scope)
-      //   }).catch(function(error) {
-      //     // registration failed
-      //     console.log('Registration failed with ' + error)
-      //   })
-      // }
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js', {scope: '/'})
+        .then(function(reg) {
+          // registration worked
+          // console.log('Registration succeeded. Scope is ' + reg.scope)
+        }).catch(function(error) {
+          // registration failed
+          // console.log('Registration failed with ' + error)
+        })
+      }
     </script>
 
     <!-- Le meta -->
@@ -131,25 +131,25 @@
         }
       }
     </script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
     <script src="https://cdn.dashjs.org/latest/dash.all.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mediaelement/4.2.6/mediaelement-and-player.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mediaelement-plugins/2.4.0/chromecast/chromecast.min.js"></script>
-    <script src="/assets/js/libs/core.min.js"></script>
-    <script src="/assets/js/libs/urlsearchparams.js"></script>
-    <script src="/assets/js/libs/streams.min.js"></script>
+    <!-- <script src="/assets/js/libs/core.min.js"></script> -->
+    <!-- <script src="/assets/js/libs/urlsearchparams.js"></script> -->
+    <!-- <script src="/assets/js/libs/streams.min.js"></script> -->
     <script src="/assets/js/libs/dialog.js"></script>
     <script src="/assets/js/libs/screw-filereader.js"></script>
-    <script src="/assets/js/libs/fetch-headers.min.js"></script>
-    <script src="/assets/js/libs/fetch.js"></script>
+    <!-- <script src="/assets/js/libs/fetch-headers.min.js"></script> -->
+    <!-- <script src="/assets/js/libs/fetch.js"></script> -->
     <script src="/assets/js/hybrid-app.js"></script>
-    <script src="/assets/js/modularvideo.js"></script>
+    <!-- <script src="/assets/js/modularvideo.js"></script> -->
     <script src="/assets/js/web-app.js"></script>
     <script>
       dialogPolyfill.registerDialog(document.querySelector('#_settingsDialog'))
       dialogPolyfill.registerDialog(document.querySelector('#_alert'))
     </script>
-    <script>{ // scope, don't remove
+    <script> { // scope, don't remove
       let iterator = document.createNodeIterator(document, 128)
       let curNode
       while (curNode = iterator.nextNode()) {
